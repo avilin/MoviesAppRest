@@ -27,12 +27,12 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "APP_USER")
 @NamedQueries({
-    @NamedQuery(name = "AppUser.findAll", query = "SELECT a FROM AppUser a")
-    , @NamedQuery(name = "AppUser.findById", query = "SELECT a FROM AppUser a WHERE a.id = :id")
-    , @NamedQuery(name = "AppUser.findByEmail", query = "SELECT a FROM AppUser a WHERE a.email = :email")
-    , @NamedQuery(name = "AppUser.findByUsername", query = "SELECT a FROM AppUser a WHERE a.username = :username")
-    , @NamedQuery(name = "AppUser.findByPassword", query = "SELECT a FROM AppUser a WHERE a.password = :password")})
-public class AppUser implements Serializable {
+    @NamedQuery(name = "User.findAll", query = "SELECT a FROM User a")
+    , @NamedQuery(name = "User.findById", query = "SELECT a FROM User a WHERE a.id = :id")
+    , @NamedQuery(name = "User.findByEmail", query = "SELECT a FROM User a WHERE a.email = :email")
+    , @NamedQuery(name = "User.findByUsername", query = "SELECT a FROM User a WHERE a.username = :username")
+    , @NamedQuery(name = "User.findByPassword", query = "SELECT a FROM User a WHERE a.password = :password")})
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -60,14 +60,14 @@ public class AppUser implements Serializable {
     @OneToMany(mappedBy = "author")
     private List<Movie> movieList;
 
-    public AppUser() {
+    public User() {
     }
 
-    public AppUser(Integer id) {
+    public User(Integer id) {
         this.id = id;
     }
 
-    public AppUser(Integer id, String email, String username, String password) {
+    public User(Integer id, String email, String username, String password) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -124,10 +124,10 @@ public class AppUser implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AppUser)) {
+        if (!(object instanceof User)) {
             return false;
         }
-        AppUser other = (AppUser) object;
+        User other = (User) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

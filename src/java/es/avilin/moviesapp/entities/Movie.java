@@ -72,7 +72,7 @@ public class Movie implements Serializable {
     private String imageUrl;
     @JoinColumn(name = "AUTHOR", referencedColumnName = "ID")
     @ManyToOne
-    private AppUser author;
+    private User author;
 
     public Movie() {
     }
@@ -145,11 +145,11 @@ public class Movie implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public AppUser getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(AppUser author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 

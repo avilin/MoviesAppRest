@@ -5,11 +5,12 @@
  */
 package es.avilin.moviesapp.services;
 
-import es.avilin.moviesapp.entities.AppUser;
+import es.avilin.moviesapp.entities.User;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,26 +27,26 @@ import javax.ws.rs.core.MediaType;
  */
 @Stateless
 @Path("user")
-public class AppUserFacadeREST extends AbstractFacade<AppUser> {
+public class UserFacadeREST extends AbstractFacade<User> {
 
     @PersistenceContext(unitName = "MoviesAppRestPU")
     private EntityManager em;
 
-    public AppUserFacadeREST() {
-        super(AppUser.class);
+    public UserFacadeREST() {
+        super(User.class);
     }
 
     @POST
     @Override
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create(AppUser entity) {
+    public void create(User entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void edit(@PathParam("id") Integer id, AppUser entity) {
+    public void edit(@PathParam("id") Integer id, User entity) {
         super.edit(entity);
     }
 
@@ -58,21 +59,21 @@ public class AppUserFacadeREST extends AbstractFacade<AppUser> {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public AppUser find(@PathParam("id") Integer id) {
+    public User find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AppUser> findAll() {
+    public List<User> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AppUser> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
+    public List<User> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }
 
@@ -81,6 +82,28 @@ public class AppUserFacadeREST extends AbstractFacade<AppUser> {
     @Produces(MediaType.TEXT_PLAIN)
     public String countREST() {
         return String.valueOf(super.count());
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response login(User entity) {
+        Response response;
+        TypedQuery<User> query = getEntityManager().createNamedQuery("User.findByUsername", User.class);
+        List<User> users = query.setParameter("username", entity.getUsername()).getResultList();
+        if(users.isEmpty()){
+            response = new Response("ERROR", "Incorrect username", null);
+        } else {
+            User user = users.get(0);
+        
+            if (user.getPassword().compareTo(entity.getPassword()) == 0) {
+                response = new Response("OK", "", user);
+            } else {
+                response = new Response("ERROR", "Incorrect password", null);
+            }
+        }
+        
+        return response;
     }
 
     @Override
