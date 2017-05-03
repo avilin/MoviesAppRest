@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,6 +21,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,7 +37,8 @@ import javax.validation.constraints.Size;
     , @NamedQuery(name = "User.findById", query = "SELECT a FROM User a WHERE a.id = :id")
     , @NamedQuery(name = "User.findByEmail", query = "SELECT a FROM User a WHERE a.email = :email")
     , @NamedQuery(name = "User.findByUsername", query = "SELECT a FROM User a WHERE a.username = :username")
-    , @NamedQuery(name = "User.findByPassword", query = "SELECT a FROM User a WHERE a.password = :password")})
+    , @NamedQuery(name = "User.findByPassword", query = "SELECT a FROM User a WHERE a.password = :password")
+    , @NamedQuery(name = "User.findByToken", query = "SELECT a FROM User a WHERE a.token = :token")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,6 +64,12 @@ public class User implements Serializable {
     @Size(min = 1, max = 15)
     @Column(name = "PASSWORD")
     private String password;
+    @Size(max = 50)
+    @Column(name = "TOKEN")
+    private String token;
+    @Column(name = "EXPIRED_DATE")
+    @Temporal(TemporalType.DATE)
+    private Date expiredDate;
     @OneToMany(mappedBy = "author")
     private List<Movie> movieList;
 
@@ -109,6 +119,22 @@ public class User implements Serializable {
     @JsonProperty
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Date getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
     }
 
     public List<Movie> getMovieList() {
