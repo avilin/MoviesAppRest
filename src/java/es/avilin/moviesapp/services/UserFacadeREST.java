@@ -85,6 +85,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
     }
     
     @POST
+    @Path("login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(User entity) {
@@ -96,7 +97,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
         } else {
             User user = users.get(0);
         
-            if (user.getPassword().compareTo(entity.getPassword()) == 0) {
+            if (entity.getPassword().compareTo(user.getPassword()) == 0) {
                 response = new Response("OK", "", user);
             } else {
                 response = new Response("ERROR", "Incorrect password", null);
