@@ -29,6 +29,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(es.avilin.moviesapp.filters.AuthenticationFilter.class);
         resources.add(es.avilin.moviesapp.services.MovieFacadeREST.class);
         resources.add(es.avilin.moviesapp.services.UserFacadeREST.class);
     }
