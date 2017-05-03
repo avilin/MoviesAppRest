@@ -71,6 +71,7 @@ public class User implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date expiredDate;
     @OneToMany(mappedBy = "author")
+    @JsonIgnore
     private List<Movie> movieList;
 
     public User() {

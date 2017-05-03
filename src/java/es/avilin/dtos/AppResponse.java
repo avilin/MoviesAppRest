@@ -3,21 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.avilin.moviesapp.services;
+package es.avilin.moviesapp.responses;
 
 /**
  *
  * @author andresvicentelinares
  */
-public class Response {
+public class AppResponse {
     
     private String status;
-    private String errorMessage;
+    private String message;
     private Object data;
 
-    public Response(String status, String errorMessage, Object data) {
+    public AppResponse(String status) {
         this.status = status;
-        this.errorMessage = errorMessage;
+        this.message = "";
+        this.data = null;
+    }
+    
+    public AppResponse(String status, String errorMessage) {
+        this.status = status;
+        this.message = errorMessage;
+        this.data = null;
+    }
+    
+    public AppResponse(String status, String errorMessage, Object data) {
+        this.status = status;
+        this.message = errorMessage;
         this.data = data;
     }
 
@@ -29,12 +41,12 @@ public class Response {
         this.status = status;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Object getData() {
