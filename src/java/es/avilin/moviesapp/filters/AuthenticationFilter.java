@@ -36,11 +36,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
-        String token = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+        String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
-        if (token == null) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Basic ")) {
             throw new NotAuthorizedException("Authorization header must be provided");
         }
+
+        String token = authorizationHeader.substring("Basic".length()).trim();
 
         try {
             validateToken(token);

@@ -6,7 +6,9 @@
 package es.avilin.moviesapp.services;
 
 import es.avilin.moviesapp.entities.User;
+import es.avilin.moviesapp.filters.Secured;
 import es.avilin.moviesapp.responses.AppResponse;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -25,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -78,6 +81,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
     }
 
     @GET
+    @Secured
     @Override
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> findAll() {
@@ -125,7 +129,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
         } else {
             user = users.get(0);
             if (user.getPassword().compareTo(password) == 0) {
-                user.setToken(issueToken(username));
+                user.setToken(issueToken(username, password));
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DAY_OF_MONTH, 30);
                 user.setExpiredDate(calendar.getTime());
@@ -137,9 +141,13 @@ public class UserFacadeREST extends AbstractFacade<User> {
         return user;
     }
 
-    private String issueToken(String username) {
-        SecureRandom random = new SecureRandom();
-        return new BigInteger(130, random).toString(32);
+    private String issueToken(String username, String password) throws Exception {
+        String token = username + ":" + password;
+        try {
+            return DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            throw new IllegalStateException("Cannot encode with UTF-8", ex);
+        }
     }
 
     @Override
