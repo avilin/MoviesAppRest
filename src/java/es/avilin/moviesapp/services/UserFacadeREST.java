@@ -5,25 +5,23 @@
  */
 package es.avilin.moviesapp.services;
 
+import es.avilin.moviesapp.dtos.LoginDTO;
+import es.avilin.moviesapp.dtos.RegisterDTO;
 import es.avilin.moviesapp.entities.User;
-import es.avilin.moviesapp.filters.Secured;
-import es.avilin.moviesapp.responses.AppResponse;
+import es.avilin.moviesapp.dtos.ResponseDTO;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,90 +36,87 @@ import javax.xml.bind.DatatypeConverter;
 public class UserFacadeREST extends AbstractFacade<User> {
 
     @PersistenceContext(unitName = "MoviesAppRestPU")
-    private EntityManager em;
+    private EntityManager entityManager;
 
     public UserFacadeREST() {
         super(User.class);
     }
 
+    @Override
+    protected EntityManager getEntityManager() {
+        return entityManager;
+    }
+
     @POST
+    @Path("register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(User entity) {
+    public Response register(RegisterDTO registerDTO) {
         Response response;
-        TypedQuery<User> query = getEntityManager().createNamedQuery("User.findByUsername", User.class);
-        List<User> users = query.setParameter("username", entity.getUsername()).getResultList();
+        if (registerDTO == null) {
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "No data received")).build();
+            return response;
+        }
+        String email = registerDTO.getEmail();
+        String username = registerDTO.getUsername();
+        String password = registerDTO.getPassword();
+        if (email == null || email.isEmpty() 
+                || username == null || username.isEmpty() 
+                || password == null || password.isEmpty()) {
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "We need an email, a username and a password to register you")).build();
+            return response;
+        }
+        
+        TypedQuery<User> query = entityManager.createNamedQuery("User.findByUsername", User.class);
+        List<User> users = query.setParameter("username", registerDTO.getUsername()).getResultList();
         if (users.isEmpty()) {
-            super.create(entity);
-            response = Response.status(Response.Status.OK).entity(new AppResponse("OK", "", entity)).build();
+            try {
+                User user = new User();
+                user.setEmail(email);
+                user.setUsername(username);
+                user.setPassword(password);
+                user.setToken(issueToken(username, password));
+                user.setExpiredDate(expiredDate());
+                super.create(user);
+                response = Response.status(Response.Status.OK).entity(new ResponseDTO("OK", "", user)).build();
+            } catch (Exception ex) {
+                response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "The application has encountered an unknown error.")).build();
+            }
         } else {
-            response = Response.status(Response.Status.OK).entity(new AppResponse("ERROR", "Username already exists")).build();
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "Username already exists")).build();
         }
         return response;
-    }
-
-    @PUT
-    @Path("{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void edit(@PathParam("id") Integer id, User entity) {
-        super.edit(entity);
-    }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public User find(@PathParam("id") Integer id) {
-        return super.find(id);
-    }
-
-    @GET
-    @Secured
-    @Override
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<User> findAll() {
-        return super.findAll();
-    }
-
-    @GET
-    @Path("{from}/{to}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<User> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
-    }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
     }
 
     @POST
     @Path("login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(User entity) {
+    public Response login(LoginDTO loginDTO) {
         Response response;
-        String username = entity.getUsername();
-        String password = entity.getPassword();
+        if (loginDTO == null) {
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "No data received")).build();
+            return response;
+        }
+        String username = loginDTO.getUsername();
+        String password = loginDTO.getPassword();
+        if (username == null || username.isEmpty() 
+                || password == null || password.isEmpty()) {
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "You need a username and a password to log in")).build();
+            return response;
+        }
         try {
             User user = authenticate(username, password);
-            response = Response.status(Response.Status.OK).entity(new AppResponse("OK", "", user)).build();
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("OK", "", user)).build();
         } catch (Exception ex) {
-            response = Response.status(Response.Status.OK).entity(new AppResponse("ERROR", ex.getMessage())).build();
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", ex.getMessage())).build();
         }
 
         return response;
     }
 
     private User authenticate(String username, String password) throws Exception {
-        TypedQuery<User> query = getEntityManager().createNamedQuery("User.findByUsername", User.class);
+        TypedQuery<User> query = entityManager.createNamedQuery("User.findByUsername", User.class);
         List<User> users = query.setParameter("username", username).getResultList();
         User user = null;
         if (users.isEmpty()) {
@@ -130,9 +125,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
             user = users.get(0);
             if (user.getPassword().compareTo(password) == 0) {
                 user.setToken(issueToken(username, password));
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DAY_OF_MONTH, 30);
-                user.setExpiredDate(calendar.getTime());
+                user.setExpiredDate(expiredDate());
                 super.edit(user);
             } else {
                 throw new Exception("Incorrect password");
@@ -146,13 +139,14 @@ public class UserFacadeREST extends AbstractFacade<User> {
         try {
             return DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException("Cannot encode with UTF-8", ex);
+            throw new Exception("Cannot encode with UTF-8");
         }
     }
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    private Date expiredDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        return calendar.getTime();
     }
 
 }

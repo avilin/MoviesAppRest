@@ -37,7 +37,6 @@ import javax.validation.constraints.Size;
     , @NamedQuery(name = "User.findById", query = "SELECT a FROM User a WHERE a.id = :id")
     , @NamedQuery(name = "User.findByEmail", query = "SELECT a FROM User a WHERE a.email = :email")
     , @NamedQuery(name = "User.findByUsername", query = "SELECT a FROM User a WHERE a.username = :username")
-    , @NamedQuery(name = "User.findByPassword", query = "SELECT a FROM User a WHERE a.password = :password")
     , @NamedQuery(name = "User.findByToken", query = "SELECT a FROM User a WHERE a.token = :token")})
 public class User implements Serializable {
 
@@ -66,9 +65,11 @@ public class User implements Serializable {
     private String password;
     @Size(max = 50)
     @Column(name = "TOKEN")
+    @JsonIgnore
     private String token;
     @Column(name = "EXPIRED_DATE")
     @Temporal(TemporalType.DATE)
+    @JsonIgnore
     private Date expiredDate;
     @OneToMany(mappedBy = "author")
     @JsonIgnore

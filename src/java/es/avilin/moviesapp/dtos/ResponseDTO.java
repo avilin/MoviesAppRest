@@ -3,31 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.avilin.moviesapp.responses;
+package es.avilin.moviesapp.dtos;
 
 /**
  *
  * @author andresvicentelinares
  */
-public class AppResponse {
+public class ResponseDTO {
     
     private String status;
     private String message;
     private Object data;
 
-    public AppResponse(String status) {
+    public ResponseDTO(String status) {
         this.status = status;
         this.message = "";
         this.data = null;
     }
     
-    public AppResponse(String status, String errorMessage) {
+    public ResponseDTO(String status, String errorMessage) {
         this.status = status;
         this.message = errorMessage;
         this.data = null;
     }
     
-    public AppResponse(String status, String errorMessage, Object data) {
+    public ResponseDTO(String status, String errorMessage, Object data) {
         this.status = status;
         this.message = errorMessage;
         this.data = data;

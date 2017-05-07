@@ -9,10 +9,12 @@ import es.avilin.moviesapp.entities.User;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
+import javax.annotation.Priority;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
@@ -23,15 +25,13 @@ import javax.ws.rs.ext.Provider;
  *
  * @author andresvicentelinares
  */
+@Secured
 @Provider
+@Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     @PersistenceContext(unitName = "MoviesAppRestPU")
-    private EntityManager em;
-
-    public EntityManager getEntityManager() {
-        return em;
-    }
+    private EntityManager entityManager;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -53,9 +53,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     }
 
     private void validateToken(String token) throws Exception {
-        TypedQuery<User> query = getEntityManager().createNamedQuery("User.findByToken", User.class);
+        TypedQuery<User> query = entityManager.createNamedQuery("User.findByToken", User.class);
         List<User> users = query.setParameter("token", token).getResultList();
-        if (users.isEmpty() || users.get(0).getExpiredDate() == null 
+        if (users.isEmpty() || users.get(0).getExpiredDate() == null
                 || users.get(0).getExpiredDate().before(Calendar.getInstance().getTime())) {
             throw new Exception();
         }
