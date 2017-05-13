@@ -7,7 +7,6 @@ package es.avilin.moviesapp.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -35,7 +35,6 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT a FROM User a")
     , @NamedQuery(name = "User.findById", query = "SELECT a FROM User a WHERE a.id = :id")
-    , @NamedQuery(name = "User.findByEmail", query = "SELECT a FROM User a WHERE a.email = :email")
     , @NamedQuery(name = "User.findByUsername", query = "SELECT a FROM User a WHERE a.username = :username")
     , @NamedQuery(name = "User.findByToken", query = "SELECT a FROM User a WHERE a.token = :token")})
 public class User implements Serializable {
@@ -47,12 +46,6 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Integer id;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "EMAIL")
-    private String email;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
@@ -71,6 +64,10 @@ public class User implements Serializable {
     @Temporal(TemporalType.DATE)
     @JsonIgnore
     private Date expiredDate;
+    @Lob
+    @Size(max = 32700)
+    @Column(name = "IMAGEURL")
+    private String imageurl;
     @OneToMany(mappedBy = "author")
     @JsonIgnore
     private List<Movie> movieList;
@@ -82,9 +79,8 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String email, String username, String password) {
+    public User(Integer id, String username, String password) {
         this.id = id;
-        this.email = email;
         this.username = username;
         this.password = password;
     }
@@ -95,14 +91,6 @@ public class User implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {
@@ -138,7 +126,15 @@ public class User implements Serializable {
     public void setExpiredDate(Date expiredDate) {
         this.expiredDate = expiredDate;
     }
+    
+    public String getImageurl() {
+        return imageurl;
+    }
 
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
+    }
+    
     public List<Movie> getMovieList() {
         return movieList;
     }

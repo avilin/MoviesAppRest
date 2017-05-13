@@ -57,13 +57,11 @@ public class UserFacadeREST extends AbstractFacade<User> {
             response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "No data received")).build();
             return response;
         }
-        String email = registerDTO.getEmail();
         String username = registerDTO.getUsername();
         String password = registerDTO.getPassword();
-        if (email == null || email.isEmpty() 
-                || username == null || username.isEmpty() 
+        if (username == null || username.isEmpty() 
                 || password == null || password.isEmpty()) {
-            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "We need an email, a username and a password to register you")).build();
+            response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "We need a username and a password to register you")).build();
             return response;
         }
         
@@ -72,7 +70,6 @@ public class UserFacadeREST extends AbstractFacade<User> {
         if (users.isEmpty()) {
             try {
                 User user = new User();
-                user.setEmail(email);
                 user.setUsername(username);
                 user.setPassword(password);
                 user.setToken(issueToken(username, password));

@@ -11,20 +11,11 @@ package es.avilin.moviesapp.dtos;
  */
 public class RegisterDTO {
     
-    private String email;
     private String username;
     private String password;
     
     public RegisterDTO() {
         
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {
