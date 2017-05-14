@@ -13,8 +13,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -59,12 +57,12 @@ public class UserFacadeREST extends AbstractFacade<User> {
         }
         String username = registerDTO.getUsername();
         String password = registerDTO.getPassword();
-        if (username == null || username.isEmpty() 
+        if (username == null || username.isEmpty()
                 || password == null || password.isEmpty()) {
             response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "We need a username and a password to register you")).build();
             return response;
         }
-        
+
         TypedQuery<User> query = entityManager.createNamedQuery("User.findByUsername", User.class);
         List<User> users = query.setParameter("username", registerDTO.getUsername()).getResultList();
         if (users.isEmpty()) {
@@ -97,7 +95,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
         }
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
-        if (username == null || username.isEmpty() 
+        if (username == null || username.isEmpty()
                 || password == null || password.isEmpty()) {
             response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "You need a username and a password to log in")).build();
             return response;

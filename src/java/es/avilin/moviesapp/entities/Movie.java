@@ -5,6 +5,7 @@
  */
 package es.avilin.moviesapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -37,39 +38,56 @@ import javax.validation.constraints.Size;
 public class Movie implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @Basic(optional = false)
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Integer id;
+
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 200)
     @Column(name = "NAME")
     private String name;
-    @Lob
-    @Size(max = 32700)
-    @Column(name = "DESCRIPTION")
-    private String description;
+
+    @Size(max = 4000)
+    @Column(name = "SYNOPSIS")
+    private String sinopsis;
+
     @Basic(optional = false)
     @NotNull
-    @Column(name = "LENGTH")
-    private int length;
+    @Column(name = "MOVIE_LENGTH")
+    private int movieLength;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 4)
     @Column(name = "RELEASE_DATE")
     private String releaseDate;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "GENRE")
     private String genre;
-    @Lob
-    @Size(max = 32700)
+
+    @Size(max = 500)
     @Column(name = "IMAGE_URL")
+    @JsonIgnore
     private String imageUrl;
+    
+    @Size(max = 500)
+    @Column(name = "THUMBNAIL_IMAGE_URL")
+    @JsonIgnore
+    private String thumbnailImageUrl;
+
+    @Lob
+    @Column(name = "IMAGE_DATA")
+    @JsonIgnore
+    private byte[] imageData;
+
     @JoinColumn(name = "AUTHOR", referencedColumnName = "ID")
     @ManyToOne
     private User author;
@@ -84,7 +102,7 @@ public class Movie implements Serializable {
     public Movie(Integer id, String name, int length, String releaseDate, String genre) {
         this.id = id;
         this.name = name;
-        this.length = length;
+        this.movieLength = length;
         this.releaseDate = releaseDate;
         this.genre = genre;
     }
@@ -105,20 +123,20 @@ public class Movie implements Serializable {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSinopsis() {
+        return sinopsis;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSinopsis(String sinopsis) {
+        this.sinopsis = sinopsis;
     }
 
-    public int getLength() {
-        return length;
+    public int getMovieLength() {
+        return movieLength;
     }
 
-    public void setLength(int length) {
-        this.length = length;
+    public void setMovieLength(int movieLength) {
+        this.movieLength = movieLength;
     }
 
     public String getReleaseDate() {
@@ -143,6 +161,22 @@ public class Movie implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+    
+    public String getThumbnailImageUrl() {
+        return thumbnailImageUrl;
+    }
+
+    public void setThumbnailImageUrl(String thumbnailImageUrl) {
+        this.thumbnailImageUrl = thumbnailImageUrl;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 
     public User getAuthor() {
@@ -177,5 +211,5 @@ public class Movie implements Serializable {
     public String toString() {
         return "es.avilin.entities.Movie[ id=" + id + " ]";
     }
-    
+
 }

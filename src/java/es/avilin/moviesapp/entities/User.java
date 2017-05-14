@@ -6,7 +6,6 @@
 package es.avilin.moviesapp.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -40,34 +39,47 @@ import javax.validation.constraints.Size;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @Basic(optional = false)
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 5, max = 15)
     @Column(name = "USERNAME")
     private String username;
+    
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 5, max = 15)
     @Column(name = "PASSWORD")
+    @JsonIgnore
     private String password;
-    @Size(max = 50)
+    
+    @Size(max = 100)
     @Column(name = "TOKEN")
     @JsonIgnore
     private String token;
+    
     @Column(name = "EXPIRED_DATE")
     @Temporal(TemporalType.DATE)
     @JsonIgnore
     private Date expiredDate;
+    
+    @Size(max = 500)
+    @Column(name = "AVATAR_URL")
+    @JsonIgnore
+    private String avatarURL;
+    
     @Lob
-    @Size(max = 32700)
-    @Column(name = "IMAGEURL")
-    private String imageurl;
+    @Column(name = "AVATAR_DATA")
+    @JsonIgnore
+    private byte[] avatarData;
+    
     @OneToMany(mappedBy = "author")
     @JsonIgnore
     private List<Movie> movieList;
@@ -101,12 +113,10 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
-    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
@@ -127,12 +137,20 @@ public class User implements Serializable {
         this.expiredDate = expiredDate;
     }
     
-    public String getImageurl() {
-        return imageurl;
+    public String getAvatarURL() {
+        return avatarURL;
     }
 
-    public void setImageurl(String imageurl) {
-        this.imageurl = imageurl;
+    public void setAvatarURL(String avatarURL) {
+        this.avatarURL = avatarURL;
+    }
+    
+    public byte[] getAvatarData() {
+        return avatarData;
+    }
+
+    public void setAvatarData(byte[] avatarData) {
+        this.avatarData = avatarData;
     }
     
     public List<Movie> getMovieList() {
