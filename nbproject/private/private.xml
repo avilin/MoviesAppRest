@@ -7,6 +7,7 @@
             <file>file:/Users/andresvicentelinares/Documents/NetBeansProjects/MoviesAppRest/src/java/es/avilin/moviesapp/dtos/UploadImageDTO.java</file>
             <file>file:/Users/andresvicentelinares/Documents/NetBeansProjects/MoviesAppRest/src/java/es/avilin/moviesapp/entities/Movie.java</file>
             <file>file:/Users/andresvicentelinares/Documents/NetBeansProjects/MoviesAppRest/src/java/es/avilin/moviesapp/services/UserFacadeREST.java</file>
+            <file>file:/Users/andresvicentelinares/Documents/NetBeansProjects/MoviesAppRest/src/conf/persistence.xml</file>
             <file>file:/Users/andresvicentelinares/Documents/NetBeansProjects/MoviesAppRest/src/java/es/avilin/moviesapp/entities/User.java</file>
         </group>
     </open-files>

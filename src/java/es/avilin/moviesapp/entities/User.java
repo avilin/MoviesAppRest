@@ -15,7 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -72,13 +71,7 @@ public class User implements Serializable {
     
     @Size(max = 500)
     @Column(name = "AVATAR_URL")
-    @JsonIgnore
     private String avatarURL;
-    
-    @Lob
-    @Column(name = "AVATAR_DATA")
-    @JsonIgnore
-    private byte[] avatarData;
     
     @OneToMany(mappedBy = "author")
     @JsonIgnore
@@ -143,14 +136,6 @@ public class User implements Serializable {
 
     public void setAvatarURL(String avatarURL) {
         this.avatarURL = avatarURL;
-    }
-    
-    public byte[] getAvatarData() {
-        return avatarData;
-    }
-
-    public void setAvatarData(byte[] avatarData) {
-        this.avatarData = avatarData;
     }
     
     public List<Movie> getMovieList() {

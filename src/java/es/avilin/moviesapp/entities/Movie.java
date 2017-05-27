@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -32,7 +31,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Movie.findAll", query = "SELECT m FROM Movie m")
     , @NamedQuery(name = "Movie.findById", query = "SELECT m FROM Movie m WHERE m.id = :id")
     , @NamedQuery(name = "Movie.findByName", query = "SELECT m FROM Movie m WHERE m.name = :name")
-    , @NamedQuery(name = "Movie.findByLength", query = "SELECT m FROM Movie m WHERE m.length = :length")
+    , @NamedQuery(name = "Movie.findByMovieLength", query = "SELECT m FROM Movie m WHERE m.movieLength = :movieLength")
     , @NamedQuery(name = "Movie.findByReleaseDate", query = "SELECT m FROM Movie m WHERE m.releaseDate = :releaseDate")
     , @NamedQuery(name = "Movie.findByGenre", query = "SELECT m FROM Movie m WHERE m.genre = :genre")})
 public class Movie implements Serializable {
@@ -75,18 +74,11 @@ public class Movie implements Serializable {
 
     @Size(max = 500)
     @Column(name = "IMAGE_URL")
-    @JsonIgnore
     private String imageUrl;
     
     @Size(max = 500)
     @Column(name = "THUMBNAIL_IMAGE_URL")
-    @JsonIgnore
     private String thumbnailImageUrl;
-
-    @Lob
-    @Column(name = "IMAGE_DATA")
-    @JsonIgnore
-    private byte[] imageData;
 
     @JoinColumn(name = "AUTHOR", referencedColumnName = "ID")
     @ManyToOne
@@ -169,14 +161,6 @@ public class Movie implements Serializable {
 
     public void setThumbnailImageUrl(String thumbnailImageUrl) {
         this.thumbnailImageUrl = thumbnailImageUrl;
-    }
-
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
     }
 
     public User getAuthor() {
