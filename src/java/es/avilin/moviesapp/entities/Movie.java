@@ -53,7 +53,7 @@ public class Movie implements Serializable {
 
     @Size(max = 4000)
     @Column(name = "SYNOPSIS")
-    private String sinopsis;
+    private String synopsis;
 
     @Basic(optional = false)
     @NotNull
@@ -115,12 +115,12 @@ public class Movie implements Serializable {
         this.name = name;
     }
 
-    public String getSinopsis() {
-        return sinopsis;
+    public String getSynopsis() {
+        return synopsis;
     }
 
-    public void setSinopsis(String sinopsis) {
-        this.sinopsis = sinopsis;
+    public void setSynopsis(String synopsis) {
+        this.synopsis = synopsis;
     }
 
     public int getMovieLength() {
