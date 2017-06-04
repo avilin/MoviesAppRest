@@ -5,11 +5,14 @@
  */
 package es.avilin.moviesapp.services;
 
-import es.avilin.moviesapp.dtos.MovieResponseDTO;
+import es.avilin.moviesapp.dtos.IdDTO;
+import es.avilin.moviesapp.dtos.MovieDTO;
 import es.avilin.moviesapp.dtos.ResponseDTO;
 import es.avilin.moviesapp.dtos.UploadImageDTO;
 import es.avilin.moviesapp.dtos.UploadsImResponseDTO;
 import es.avilin.moviesapp.entities.Movie;
+import es.avilin.moviesapp.entities.User;
+import es.avilin.moviesapp.filters.Secured;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -43,10 +46,26 @@ public class MovieFacadeREST extends AbstractFacade<Movie> {
     }
 
     @POST
+    @Secured
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createMovie(Movie entity) {
-        super.create(entity);
-        Response response = Response.status(Response.Status.OK).entity(new ResponseDTO("OK", "", entity.getId())).build();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createMovie(MovieDTO movieDTO) {
+        Movie movie = new Movie(0, movieDTO.getName(), movieDTO.getMovieLength(), movieDTO.getReleaseDate(), movieDTO.getGenre());
+        movie.setSynopsis(movieDTO.getSynopsis());
+        movie.setImageUrl(movieDTO.getImageURL());
+        movie.setThumbnailImageUrl(movieDTO.getThumbnailImageURL());
+        
+        TypedQuery<User> query = entityManager.createNamedQuery("User.findById", User.class);
+        User user = query.setParameter("id", movieDTO.getAuthor()).getSingleResult();
+        if (user == null) {
+            Response response = Response.status(Response.Status.OK).entity(new ResponseDTO("ERROR", "User doesn't exist")).build();
+            return response;
+        }
+        
+        movie.setAuthor(user);
+        super.create(movie);
+        
+        Response response = Response.status(Response.Status.OK).entity(new ResponseDTO("OK", "", new IdDTO(movie.getId()))).build();
         return response;
     }
 
@@ -59,6 +78,7 @@ public class MovieFacadeREST extends AbstractFacade<Movie> {
 
     @DELETE
     @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response removeMovie(@PathParam("id") Integer id) {
         super.remove(super.find(id));
         Response response = Response.status(Response.Status.OK).entity(new ResponseDTO("OK", "")).build();
@@ -75,8 +95,8 @@ public class MovieFacadeREST extends AbstractFacade<Movie> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllMovies() {
-        TypedQuery<MovieResponseDTO> query = entityManager.createQuery("SELECT new es.avilin.moviesapp.dtos.MovieResponseDTO(m.id, m.name, m.synopsis, m.movieLength, m.releaseDate, m.genre, m.imageUrl, m.thumbnailImageUrl, m.author.id) FROM Movie m", MovieResponseDTO.class);
-        List<MovieResponseDTO> movies = query.getResultList();
+        TypedQuery<MovieDTO> query = entityManager.createQuery("SELECT new es.avilin.moviesapp.dtos.MovieDTO(m.id, m.name, m.synopsis, m.movieLength, m.releaseDate, m.genre, m.imageUrl, m.thumbnailImageUrl, m.author.id) FROM Movie m", MovieDTO.class);
+        List<MovieDTO> movies = query.getResultList();
         Response response = Response.status(Response.Status.OK).entity(new ResponseDTO("OK", "", movies)).build();
         return response;
     }

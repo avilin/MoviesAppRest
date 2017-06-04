@@ -62,9 +62,8 @@ public class Movie implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 4)
     @Column(name = "RELEASE_DATE")
-    private String releaseDate;
+    private int releaseDate;
 
     @Basic(optional = false)
     @NotNull
@@ -91,7 +90,7 @@ public class Movie implements Serializable {
         this.id = id;
     }
 
-    public Movie(Integer id, String name, int length, String releaseDate, String genre) {
+    public Movie(Integer id, String name, int length, int releaseDate, String genre) {
         this.id = id;
         this.name = name;
         this.movieLength = length;
@@ -131,11 +130,11 @@ public class Movie implements Serializable {
         this.movieLength = movieLength;
     }
 
-    public String getReleaseDate() {
+    public int getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(int releaseDate) {
         this.releaseDate = releaseDate;
     }
 

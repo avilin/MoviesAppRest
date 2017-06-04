@@ -9,23 +9,23 @@ package es.avilin.moviesapp.dtos;
  *
  * @author andresvicentelinares
  */
-public class MovieResponseDTO {
+public class MovieDTO {
 
     private Integer id;
     private String name;
     private String synopsis;
     private Integer movieLength;
-    private String releaseDate;
+    private Integer releaseDate;
     private String genre;
     private String imageURL;
     private String thumbnailImageURL;
     private Integer author;
 
-    public MovieResponseDTO() {
+    public MovieDTO() {
 
     }
 
-    public MovieResponseDTO(Integer id, String name, String synopsis, Integer movieLength, String releaseDate, String genre, String imageURL, String thumbnailImageURL, Integer author) {
+    public MovieDTO(Integer id, String name, String synopsis, Integer movieLength, Integer releaseDate, String genre, String imageURL, String thumbnailImageURL, Integer author) {
         this.id = id;
         this.name = name;
         this.synopsis = synopsis;
@@ -71,11 +71,11 @@ public class MovieResponseDTO {
         this.movieLength = movieLength;
     }
 
-    public String getReleaseDate() {
+    public Integer getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(Integer releaseDate) {
         this.releaseDate = releaseDate;
     }
 
